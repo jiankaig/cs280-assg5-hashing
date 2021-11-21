@@ -1,0 +1,87 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {//"g++ build and debug active file(cygwin)"
+            "name": "g++ build and debug active file(cygwin)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/make/bin/vpl_execution",
+            "args": [""],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "%PATH%;z:\\cygwin64\\bin"
+                }
+            ],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\cygwin64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "logging": { "engineLogging": true }, //optional
+            "preLaunchTask": "g++.exe build vpl_execution(cygwin64)"
+        },
+        {//"g++ - Build and debug active file"
+            "name": "g++ - Build and debug active file",
+            "type": "lldb", //"cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${fileDirname}", //this works too: "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: g++ build vpl_execution" //ensure that this matches "label" in tasks.json
+        },
+        {//"g++ - Build and debug vpl_execution"
+            "name": "g++ - Build and debug vpl_execution",
+            "type": "lldb", //"cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/make/bin/vpl_execution", //"${fileDirname}/${fileBasenameNoExtension}",
+            "args": ["17"],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: g++ build vpl_execution" //ensure that this matches "label" in tasks.json
+        },
+        {//"g++ - make and debug vpl_execution "
+            "name": "g++ - make and debug vpl_execution ",
+            "type": "lldb", //"cppdbg",
+            "request": "launch",
+            "program":"${workspaceFolder}/make/bin/vpl_execution",//"${workspaceFolder}/make/src/driver-sample",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}", //"${workspaceFolder}/make/src",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "make Build", //ensure that this matches "label" in tasks.json
+        },
+        {//"clang++ - Build and debug active file"
+            "name": "clang++ - Build and debug active file",
+            "type": "lldb", // "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": true, // cause debugger to stop on the main method, aka breakpoints
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: clang++ build active file" //ensure that this matches "label" in tasks.json
+        }
+    ]
+}

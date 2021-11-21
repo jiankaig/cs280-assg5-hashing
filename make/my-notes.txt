@@ -1,0 +1,5 @@
+If compiling with native command instead of make
+use:
+
+cd src
+g++ -o vpl_execution driver-sample.cpp ObjectAllocator.cpp PRNG.cpp  -Werror -Wall -Wextra -Wconversion -std=c++14 -pedantic -Wno-deprecated -I../include

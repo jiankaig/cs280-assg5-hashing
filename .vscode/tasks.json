@@ -1,0 +1,178 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{//"C/C++: clang++ build active file"
+			"type": "cppbuild",
+			"label": "C/C++: clang++ build active file",
+			"command": "/usr/bin/clang++",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-std=c++14",
+				"-stdlib=libc++",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}/${fileBasenameNoExtension}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: /usr/bin/clang++"
+		},
+		{//"C/C++: g++ build active file"
+			"type": "cppbuild",
+			"label": "C/C++: g++ build active file",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-Werror", 
+				"-Wall",
+				"-Wextra",
+				"-Wconversion",
+				"-std=c++14", 
+				"-pedantic", 
+				"-Wno-deprecated",
+				"-g",
+				"${fileDirname}/*.cpp" ,// "${file}",
+				"-I${workspaceFolder}/make/include",
+				"-o",
+				"${fileDirname}/${fileBasenameNoExtension}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{//"C/C++: g++ build vpl_execution"
+			"type": "cppbuild",
+			"label": "C/C++: g++ build vpl_execution",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-Werror", 
+				"-Wall",
+				"-Wextra",
+				"-Wconversion",
+				"-std=c++14", 
+				"-pedantic", 
+				"-Wno-deprecated",
+				"-g",
+				"${workspaceFolder}/make/src/*.cpp" ,
+				"-I${workspaceFolder}/make/include",
+				"-o",
+				"${workspaceFolder}/make/bin/vpl_execution"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{//"g++.exe build vpl_execution(cygwin64)"
+			"type": "shell",
+			"label": "g++.exe build vpl_execution(cygwin64)",
+			"command": "C:\\cygwin64\\bin\\g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-Werror", 
+				"-Wall",
+				"-Wextra",
+				"-Wconversion",
+				"-std=c++14", 
+				"-pedantic", 
+				"-Wno-deprecated",
+				"-g",
+				"${workspaceFolder}/make/src/*.cpp" ,
+				"-I${workspaceFolder}/make/include",
+				"-o",
+				"${workspaceFolder}/make/bin/vpl_execution"
+			],
+			"options": {
+			  "cwd": "C:\\cygwin64\\bin"
+			},
+			"problemMatcher": [
+			  "$gcc"
+			],
+			"group": "build"
+		}
+		,
+		{//"Make Project"
+            "label": "Make Project",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}",
+            "args": ["make"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": "$msCompile"
+		},
+		{//"make Build"
+            "label": "make Build",
+            "type": "shell",
+            "command": "make",
+            // use options.cwd property if the Makefile is not in the project root ${workspaceRoot} dir
+            "options": {
+                "cwd": "${workspaceRoot}/make"
+            },
+            // start the build without prompting for task selection, use "group": "build" otherwise
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            // arg passing example: in this case is executed make QUIET=0
+            "args": ["QUIET=0"],
+            // Use the standard less compilation problem matcher.
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["absolute"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        }, 
+		{//"label": "echo workspaceFolder: "
+			"label": "echo workspaceFolder: ",
+			"type": "shell",
+			"command": "echo ${workspaceFolder}"
+		},
+		{//"echo fileDirname: ",
+			"label": "echo fileDirname: ",
+			"type": "shell",
+			"command": "echo ${fileDirname}"
+		}
+	]
+}
