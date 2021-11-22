@@ -6,6 +6,13 @@ template <typename T>
 ChHashTable<T>::ChHashTable(const HTConfig& Config, ObjectAllocator* allocator){
     (void)Config;
     (void)allocator;
+    try{
+        OAConfig config(true);
+        oa_ = new ObjectAllocator(sizeof(ChHTNode), config);
+    }
+    catch(const std::exception& e){
+        throw(BSTException(BSTException::E_NO_MEMORY, e.what()));
+    }
 }
 
 template <typename T>

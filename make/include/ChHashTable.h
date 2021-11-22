@@ -6,7 +6,6 @@
 #include <string>
 #include "ObjectAllocator.h"
 #include "support.h"
-#include <string>
 
 // client-provided hash function: takes a key and table size,
 // returns an index in the table.
@@ -133,6 +132,8 @@ class ChHashTable
 
      // Private fields and methods...
      T ret_;
+     HTConfig config_;
+     ObjectAllocator *oa_;
 };
 
 #include "ChHashTable.cpp"
