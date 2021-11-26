@@ -6,6 +6,7 @@
 #include <string>
 #include "ObjectAllocator.h"
 #include "support.h"
+#include <vector> //self add
 
 // client-provided hash function: takes a key and table size,
 // returns an index in the table.
@@ -131,9 +132,17 @@ class ChHashTable
   private:
 
      // Private fields and methods...
-     T ret_;
-     HTConfig config_;
-     ObjectAllocator *oa_;
+    // bool find(const ChHTHeadNode& bucket, const T& Data);
+    bool find(ChHTHeadNode* bucket, const T& Data);
+    // void push_back( ChHTHeadNode& bucket, const T& Data);
+    void push_front(ChHTHeadNode* bucket, const T& Data, const char *Key);
+
+    T ret_;
+    HTConfig config_;
+    ObjectAllocator *oa_;
+    // std::vector<ChHTHeadNode> HashTable_;
+    ChHTHeadNode* HashTable_;
+    mutable HTStats HTStats_;
 };
 
 #include "ChHashTable.cpp"

@@ -291,6 +291,7 @@ void Test1(HashData *phd)
   cout << "Growth factor: " << growth_factor << endl;
 
   typedef Person * T;
+  // typedef int T;
   ChHashTable<T> ht(ChHashTable<T>::HTConfig(initial_size, phf, max_load_factor, growth_factor, 0));
   try
   {
@@ -821,7 +822,7 @@ int main(int argc, char **argv)
   HASHFUNCS hf = UNIVERSAL;
 
   int test_num = 0;
-  std::cin>>test_num;
+  // std::cin>>test_num;
   if (argc > 1)
     test_num = atoi(argv[1]);
 
