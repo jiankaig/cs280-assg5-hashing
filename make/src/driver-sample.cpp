@@ -302,9 +302,9 @@ void Test1(HashData *phd)
     {
       sprintf(buf, "%3i001", i);
       ht.insert(buf, 0);
-      //DumpTable<T>(*ht);
-      //DumpStats<T>(*ht);
-      //cout << "==============================================================" << std::endl;
+      // DumpTable<T>(ht);
+      // DumpStats<T>(ht);
+      // cout << "==============================================================" << std::endl;
     }
     DumpTable<T>(ht);
     DumpStats<T>(ht);

@@ -32,11 +32,11 @@ void ChHashTable<T>::insert(const char *Key, const T& Data){
 
     //check bucket for Data
     //if doesnt exist, then insert
-    if(!find(bucket, Data)){
+    if(!find(bucket, Data, Key)){
         push_front(bucket, Data, Key);
     }
     else{
-        HTStats_.Probes_ += 1;
+        // HTStats_.Probes_ += 1;
         push_front(bucket, Data, Key);
         // throw(HashTableException(HashTableException::E_DUPLICATE, "duplicate data in bucket"));
     }
@@ -44,13 +44,16 @@ void ChHashTable<T>::insert(const char *Key, const T& Data){
 }
 
 template <typename T>
-bool ChHashTable<T>::find(ChHTHeadNode* bucket, const T& Data){
+bool ChHashTable<T>::find(ChHTHeadNode* bucket, const T& Data, const char *Key){
+    (void)Data;
     ChHTNode* ptr = bucket->Nodes;
+    HTStats_.Probes_++;
     if(!ptr)
-        return false; //basecase
+        return false; //base case
 
-    while(ptr->Next != nullptr){
-        if(ptr->Data == Data){
+    while(ptr){
+        HTStats_.Probes_++;
+        if( ptr->Key == Key){
             return true;
         }
         ptr = ptr->Next;
