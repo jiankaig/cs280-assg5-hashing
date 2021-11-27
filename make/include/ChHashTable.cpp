@@ -15,11 +15,22 @@ ChHashTable<T>::ChHashTable(const HTConfig& Config, ObjectAllocator* allocator)
     HTStats_.HashFunc_ = config_.HashFunc_;
     HTStats_.TableSize_ = config_.InitialTableSize_;
     HTStats_.Allocator_ = allocator;
+    if(allocator != 0){
+        oa_ = allocator;
+        oa_node = allocator;
+    }
+    else{
+        OAConfig config(true);
+        oa_ = new ObjectAllocator(sizeof(ChHTHeadNode), config);
+        oa_node = new ObjectAllocator(sizeof(ChHTNode), config);
+    }
 }
 
 template <typename T>
 ChHashTable<T>::~ChHashTable(){
-
+    if(HTStats_.Allocator_ == 0){
+        //delete oa_ and oa_node
+    }
 }
 
 // Insert a key/data pair into table. Throws an exception if the
@@ -32,19 +43,12 @@ void ChHashTable<T>::insert(const char *Key, const T& Data){
 
     //check bucket for Data
     //if doesnt exist, then insert
-    if(!find(bucket, Data, Key)){
+    if(!findInBucket(bucket, Data, Key))
         push_front(bucket, Data, Key);
-    }
-    else{
-        // HTStats_.Probes_ += 1;
-        push_front(bucket, Data, Key);
-        // throw(HashTableException(HashTableException::E_DUPLICATE, "duplicate data in bucket"));
-    }
-
 }
 
 template <typename T>
-bool ChHashTable<T>::find(ChHTHeadNode* bucket, const T& Data, const char *Key){
+bool ChHashTable<T>::findInBucket(ChHTHeadNode* bucket, const T& Data, const char *Key){
     (void)Data;
     ChHTNode* ptr = bucket->Nodes;
     HTStats_.Probes_++;
@@ -69,11 +73,11 @@ void ChHashTable<T>::push_front(ChHTHeadNode* bucket, const T& Data, const char 
     //go to last node
 
     ChHTNode* predessorNode = bucket->Nodes;
-    ChHTNode* newNode = new ChHTNode(Data);
+    // ChHTNode* newNode = new ChHTNode(Data);
+    ChHTNode* newNode = new (reinterpret_cast<ChHTNode*>(oa_node->Allocate()))ChHTNode(Data);
     strcpy(newNode->Key, Key);
     newNode->Next = predessorNode;
     bucket->Nodes = newNode;
-    // newNode = new (reinterpret_cast<ChHTNode*>(oa_->Allocate()))ChHTNode(Data);
     
 }
 
@@ -81,7 +85,22 @@ void ChHashTable<T>::push_front(ChHTHeadNode* bucket, const T& Data, const char 
 // (E_ITEM_NOT_FOUND)
 template <typename T>
 void ChHashTable<T>::remove(const char *Key){
-    (void)Key; 
+    // Delete an item by key. Throws an exception if the key doesn't exist.
+    find(Key); 
+    
+    unsigned hashValue = config_.HashFunc_(Key, config_.InitialTableSize_);
+    ChHTHeadNode* bucket = &HashTable_[hashValue];
+    ChHTNode* temp = bucket->Nodes;
+    ChHTNode* prev = nullptr;
+    while(strcmp(Key, temp->Key)){
+        prev = temp;
+        temp = temp->Next;
+    }
+    if(prev)
+        prev->Next = temp->Next;
+    else
+        bucket->Nodes = temp->Next;
+    HTStats_.Count_--;
 }
 
 // Find and return data by key. throws exception if key doesn't exist.

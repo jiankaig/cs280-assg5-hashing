@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/make/bin/vpl_execution",
-            "args": ["1"],
+            "args": ["2"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [

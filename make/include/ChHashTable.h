@@ -133,13 +133,14 @@ class ChHashTable
 
      // Private fields and methods...
     // bool find(const ChHTHeadNode& bucket, const T& Data);
-    bool find(ChHTHeadNode* bucket, const T& Data, const char *Key);
+    bool findInBucket(ChHTHeadNode* bucket, const T& Data, const char *Key);
     // void push_back( ChHTHeadNode& bucket, const T& Data);
     void push_front(ChHTHeadNode* bucket, const T& Data, const char *Key);
 
     T ret_;
     HTConfig config_;
     ObjectAllocator *oa_;
+    ObjectAllocator *oa_node;
     // std::vector<ChHTHeadNode> HashTable_;
     ChHTHeadNode* HashTable_;
     mutable HTStats HTStats_;
