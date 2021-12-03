@@ -7,6 +7,7 @@
 #include "ObjectAllocator.h"
 #include "support.h"
 #include <vector> //self add
+#include <cmath> //self add
 
 // client-provided hash function: takes a key and table size,
 // returns an index in the table.
@@ -136,6 +137,7 @@ class ChHashTable
     bool findInBucket(ChHTHeadNode* bucket, const T& Data, const char *Key);
     // void push_back( ChHTHeadNode& bucket, const T& Data);
     void push_front(ChHTHeadNode* bucket, const T& Data, const char *Key);
+    void GrowTable();
 
     T ret_;
     HTConfig config_;
@@ -144,6 +146,7 @@ class ChHashTable
     // std::vector<ChHTHeadNode> HashTable_;
     ChHTHeadNode* HashTable_;
     mutable HTStats HTStats_;
+    double load_factor_;
 };
 
 #include "ChHashTable.cpp"

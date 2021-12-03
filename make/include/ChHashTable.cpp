@@ -37,16 +37,43 @@ ChHashTable<T>::~ChHashTable(){
 // insertion is unsuccessful.(E_DUPLICATE, E_NO_MEMORY)
 template <typename T>
 void ChHashTable<T>::insert(const char *Key, const T& Data){
-    //   (void)Data;
-    unsigned hashValue = config_.HashFunc_(Key, config_.InitialTableSize_);
+    //update/check load factor
+    double loadFactor = static_cast<double>(HTStats_.Count_+1)/
+                        static_cast<double>(HTStats_.TableSize_);
+   if(loadFactor > config_.MaxLoadFactor_){
+        GrowTable();
+    }
+
+    unsigned hashValue = config_.HashFunc_(Key, HTStats_.TableSize_);
     ChHTHeadNode* bucket = &HashTable_[hashValue];
 
     //check bucket for Data
     //if doesnt exist, then insert
     if(!findInBucket(bucket, Data, Key))
         push_front(bucket, Data, Key);
+
+    
 }
 
+template <typename T>
+void ChHashTable<T>::GrowTable(){
+    HTStats_.Expansions_++;
+    double factor = std::ceil(HTStats_.TableSize_ * config_.GrowthFactor_);  // Need to include <cmath>
+    unsigned new_size = GetClosestPrime(static_cast<unsigned>(factor)); // Get new prime size
+    unsigned old_size = HTStats_.TableSize_;
+    HTStats_.TableSize_ = new_size;
+    ChHTHeadNode* NewTable = new ChHTHeadNode[new_size];
+    ChHTHeadNode* OldTable = HashTable_;
+    HashTable_ = NewTable;
+    HTStats_.Count_ = 0;
+    for(unsigned i{};i<old_size;i++){
+        ChHTNode* bucketPtr = OldTable[i].Nodes;
+        while(bucketPtr){
+            insert(bucketPtr->Key, bucketPtr->Data); //...
+            bucketPtr = bucketPtr->Next;
+        }
+    }
+}
 template <typename T>
 bool ChHashTable<T>::findInBucket(ChHTHeadNode* bucket, const T& Data, const char *Key){
     (void)Data;
@@ -57,7 +84,7 @@ bool ChHashTable<T>::findInBucket(ChHTHeadNode* bucket, const T& Data, const cha
 
     while(ptr){
         HTStats_.Probes_++;
-        if( ptr->Key == Key){
+        if(!strcmp(Key, ptr->Key)){
             return true;
         }
         ptr = ptr->Next;
