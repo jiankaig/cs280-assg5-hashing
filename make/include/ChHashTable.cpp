@@ -51,6 +51,8 @@ void ChHashTable<T>::insert(const char *Key, const T& Data){
     //if doesnt exist, then insert
     if(!findInBucket(bucket, Data, Key))
         push_front(bucket, Data, Key);
+    else
+        throw HashTableException(HashTableException::E_DUPLICATE, "E_DUPLICATE!");
 
     
 }
@@ -73,6 +75,7 @@ void ChHashTable<T>::GrowTable(){
             bucketPtr = bucketPtr->Next;
         }
     }
+    delete [] OldTable;
 }
 template <typename T>
 bool ChHashTable<T>::findInBucket(ChHTHeadNode* bucket, const T& Data, const char *Key){
@@ -113,13 +116,13 @@ void ChHashTable<T>::push_front(ChHTHeadNode* bucket, const T& Data, const char 
 template <typename T>
 void ChHashTable<T>::remove(const char *Key){
     // Delete an item by key. Throws an exception if the key doesn't exist.
-    find(Key); 
+    // find(Key); 
     
     unsigned hashValue = config_.HashFunc_(Key, config_.InitialTableSize_);
     ChHTHeadNode* bucket = &HashTable_[hashValue];
     ChHTNode* temp = bucket->Nodes;
     ChHTNode* prev = nullptr;
-    while(strcmp(Key, temp->Key)){
+    while(!strcmp(Key, temp->Key)){
         prev = temp;
         temp = temp->Next;
     }
@@ -155,7 +158,29 @@ const T& ChHashTable<T>::find(const char *Key) const{
 // Removes all items from the table (Doesn't deallocate table)
 template <typename T>
 void ChHashTable<T>::clear(){
-
+    for(unsigned i = 0; i < HTStats_.TableSize_; ++i)
+    {
+        ChHTNode* node = HashTable_[i].Nodes;
+        ChHTNode* nxt;
+        // while node is not empty
+        while(node)
+        {
+        nxt = node->Next;
+        if(config_.FreeProc_)
+            config_.FreeProc_(node->Data);
+        if(!oa_node) // if object allocator is nullptr
+            delete(node); // delete node
+        else
+            oa_node->Free(node); // free node
+        
+        /* update stats */
+        HTStats_.Count_--;
+        
+        node = nxt; // go to nxt node
+        }
+        
+        HashTable_[i].Nodes = nullptr; // assign node to nullptr
+    }
 }
 
 // Allow the client to peer into the data. Returns a struct that contains 

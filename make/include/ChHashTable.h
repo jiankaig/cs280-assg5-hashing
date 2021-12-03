@@ -143,7 +143,6 @@ class ChHashTable
     HTConfig config_;
     ObjectAllocator *oa_;
     ObjectAllocator *oa_node;
-    // std::vector<ChHTHeadNode> HashTable_;
     ChHTHeadNode* HashTable_;
     mutable HTStats HTStats_;
     double load_factor_;

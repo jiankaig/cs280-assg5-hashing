@@ -758,7 +758,7 @@ void Test8(HashData *phd)
 
   HASHFUNC phf = phd->Fn;
 
-  unsigned size = 1000000;
+  unsigned size = 100;//1000000;
   unsigned initial_size = 5; //4344479;
   double max_load_factor = 2.5;
   double growth_factor = 1.5;
@@ -785,10 +785,10 @@ void Test8(HashData *phd)
       ht->insert(buf, 0);
     }
     
-    //DumpTable<T>(*ht);
+    // DumpTable<T>(*ht);
     DumpStats<T>(*ht);
     cout << endl;
-#if 1
+// #if 1
     cout << "Deleting " << size << " items...";
     for (i = 1; i <= size; i++)
     {
@@ -798,7 +798,7 @@ void Test8(HashData *phd)
     cout << endl;
     DumpStats<T>(*ht);
     cout << endl;
-#endif
+// #endif
   }
   catch (HashTableException &)
   {
