@@ -758,7 +758,7 @@ void Test8(HashData *phd)
 
   HASHFUNC phf = phd->Fn;
 
-  unsigned size = 100;//1000000;
+  unsigned size = 1000000;
   unsigned initial_size = 5; //4344479;
   double max_load_factor = 2.5;
   double growth_factor = 1.5;

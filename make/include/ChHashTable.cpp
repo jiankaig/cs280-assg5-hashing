@@ -116,28 +116,47 @@ void ChHashTable<T>::push_front(ChHTHeadNode* bucket, const T& Data, const char 
 template <typename T>
 void ChHashTable<T>::remove(const char *Key){
     // Delete an item by key. Throws an exception if the key doesn't exist.
-    // find(Key); 
+    find(Key); 
     
-    unsigned hashValue = config_.HashFunc_(Key, config_.InitialTableSize_);
+    unsigned hashValue = config_.HashFunc_(Key, HTStats_.TableSize_);
     ChHTHeadNode* bucket = &HashTable_[hashValue];
     ChHTNode* temp = bucket->Nodes;
     ChHTNode* prev = nullptr;
-    while(!strcmp(Key, temp->Key)){
+    // HTStats_.Probes_++; // increment probe
+
+    while(temp){
+        if(!strcmp(Key, temp->Key)){
+            if(prev)
+                prev->Next = temp->Next;
+            else
+                bucket->Nodes = temp->Next;
+            
+            if(temp->Next) // if node have next, link to next next node
+                    temp->Next = temp->Next->Next;
+            if(config_.FreeProc_)
+                config_.FreeProc_(temp->Data);
+                
+            if(!oa_node) // if allocator is nullptr
+                delete(temp); // delete node
+            else
+                oa_node->Free(temp); // free node
+
+            HTStats_.Count_--;
+            return;
+        }
+        
+        // HTStats_.Probes_++; // increment probe
         prev = temp;
         temp = temp->Next;
     }
-    if(prev)
-        prev->Next = temp->Next;
-    else
-        bucket->Nodes = temp->Next;
-    HTStats_.Count_--;
+    
 }
 
 // Find and return data by key. throws exception if key doesn't exist.
 // (E_ITEM_NOT_FOUND)
 template <typename T>
 const T& ChHashTable<T>::find(const char *Key) const{
-    unsigned hashValue = config_.HashFunc_(Key, config_.InitialTableSize_);
+    unsigned hashValue = config_.HashFunc_(Key, HTStats_.TableSize_);
     ChHTNode* node = HashTable_[hashValue].Nodes;
     
     while(node)
