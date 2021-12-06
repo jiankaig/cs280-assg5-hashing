@@ -1,15 +1,15 @@
 #include "ChHashTable.h"
 
-// ObjectAllocator: the usual.
-// Config: the configuration for the hash table.
+/**
+ * @brief Construct a new Ch Hash Table< T>:: Ch Hash Table object
+ * 
+ * @tparam T 
+ * @param Config the configuration for the hash table.
+ * @param allocator ObjectAllocator: the usual.
+ */
 template <typename T>
 ChHashTable<T>::ChHashTable(const HTConfig& Config, ObjectAllocator* allocator)
     :config_(Config), HTStats_(){
-
-    // for(unsigned i{};i<Config.InitialTableSize_;i++){
-    //     // auto& temp = new ChHTHeadNode();
-    //     HashTable_.push_back(ChHTHeadNode());
-    // }
 
     HashTable_ = new ChHTHeadNode[config_.InitialTableSize_];
     HTStats_.HashFunc_ = config_.HashFunc_;
@@ -21,22 +21,33 @@ ChHashTable<T>::ChHashTable(const HTConfig& Config, ObjectAllocator* allocator)
     }
     else{
         OAConfig config(true);
-        oa_ = new ObjectAllocator(sizeof(ChHTHeadNode), config);
         oa_node = new ObjectAllocator(sizeof(ChHTNode), config);
     }
 }
 
+/**
+ * @brief Destroy the Ch Hash Table< T>:: Ch Hash Table object
+ * 
+ * @tparam T 
+ */
 template <typename T>
 ChHashTable<T>::~ChHashTable(){
     clear(); // clear hashtable
     delete[] HashTable_; // delete array
     if(HTStats_.Allocator_ == 0){
-        //delete oa_ and oa_node
+        //delete oa_node ?
     }
 }
 
-// Insert a key/data pair into table. Throws an exception if the
-// insertion is unsuccessful.(E_DUPLICATE, E_NO_MEMORY)
+
+/**
+ * @brief Insert a key/data pair into table. Throws an exception if the
+ *        insertion is unsuccessful.(E_DUPLICATE, E_NO_MEMORY)
+ * 
+ * @tparam T 
+ * @param Key 
+ * @param Data 
+ */
 template <typename T>
 void ChHashTable<T>::insert(const char *Key, const T& Data){
     //update/check load factor
@@ -51,7 +62,7 @@ void ChHashTable<T>::insert(const char *Key, const T& Data){
 
     //check bucket for Data
     //if doesnt exist, then insert
-    if(!findInBucket(bucket, Data, Key))
+    if(!findInBucket(bucket, Key))
         push_front(bucket, Data, Key);
     else
         throw HashTableException(HashTableException::E_DUPLICATE, "E_DUPLICATE!");
@@ -59,6 +70,11 @@ void ChHashTable<T>::insert(const char *Key, const T& Data){
     
 }
 
+/**
+ * @brief helper function to Grow hash Table
+ * 
+ * @tparam T 
+ */
 template <typename T>
 void ChHashTable<T>::GrowTable(){
     HTStats_.Expansions_++;
@@ -79,9 +95,18 @@ void ChHashTable<T>::GrowTable(){
     }
     delete [] OldTable;
 }
+
+/**
+ * @brief find Key In Bucket.
+ * 
+ * @tparam T 
+ * @param bucket  Bucket is a slot in seperate chained hash table
+ * @param Key 
+ * @return true if key found
+ * @return false if key not found
+ */
 template <typename T>
-bool ChHashTable<T>::findInBucket(ChHTHeadNode* bucket, const T& Data, const char *Key){
-    (void)Data;
+bool ChHashTable<T>::findInBucket(ChHTHeadNode* bucket, const char *Key){
     ChHTNode* ptr = bucket->Nodes;
     HTStats_.Probes_++;
     if(!ptr)
@@ -97,9 +122,16 @@ bool ChHashTable<T>::findInBucket(ChHTHeadNode* bucket, const T& Data, const cha
     return false;
 }
 
+/**
+ * @brief push data/key pair to the front of a bucket
+ * 
+ * @tparam T 
+ * @param bucket 
+ * @param Data 
+ * @param Key 
+ */
 template <typename T>
 void ChHashTable<T>::push_front(ChHTHeadNode* bucket, const T& Data, const char *Key){
-    // ChHTNode* ptr = bucket->Nodes;
     bucket->Count += 1;
     HTStats_.Count_ += 1;
     //go to last node
@@ -116,8 +148,14 @@ void ChHashTable<T>::push_front(ChHTHeadNode* bucket, const T& Data, const char 
     
 }
 
-// Delete an item by key. Throws an exception if the key doesn't exist.
-// (E_ITEM_NOT_FOUND)
+
+/**
+ * @brief Delete an item by key. Throws an exception if the key doesn't exist.
+ *        throws (E_ITEM_NOT_FOUND)
+ * 
+ * @tparam T 
+ * @param Key 
+ */
 template <typename T>
 void ChHashTable<T>::remove(const char *Key){
     // Delete an item by key. Throws an exception if the key doesn't exist.
@@ -157,8 +195,15 @@ void ChHashTable<T>::remove(const char *Key){
     
 }
 
-// Find and return data by key. throws exception if key doesn't exist.
-// (E_ITEM_NOT_FOUND)
+
+/**
+ * @brief Find and return data by key. throws exception if key doesn't exist.
+ *        (E_ITEM_NOT_FOUND)
+ * 
+ * @tparam T 
+ * @param Key 
+ * @return const T& 
+ */
 template <typename T>
 const T& ChHashTable<T>::find(const char *Key) const{
     unsigned hashValue = config_.HashFunc_(Key, HTStats_.TableSize_);
@@ -179,7 +224,11 @@ const T& ChHashTable<T>::find(const char *Key) const{
     throw HashTableException(HashTableException::E_ITEM_NOT_FOUND, "Not Found");
 }
 
-// Removes all items from the table (Doesn't deallocate table)
+/**
+ * @brief Removes all items from the table (Doesn't deallocate table)
+ * 
+ * @tparam T 
+ */
 template <typename T>
 void ChHashTable<T>::clear(){
     for(unsigned i = 0; i < HTStats_.TableSize_; ++i)
@@ -207,14 +256,26 @@ void ChHashTable<T>::clear(){
     }
 }
 
-// Allow the client to peer into the data. Returns a struct that contains 
-// information on the status of the table for debugging and testing. 
-// The struct is defined in the header file.
+
+/**
+ * @brief Allow the client to peer into the data. Returns a struct that contains 
+ *        information on the status of the table for debugging and testing. 
+ *        The struct is defined in the header file.
+ * 
+ * @tparam T 
+ * @return HTStats 
+ */
 template <typename T>
 HTStats ChHashTable<T>::GetStats() const{
     return HTStats_;
 }
 
+/**
+ * @brief Allow client to access hash table
+ * 
+ * @tparam T 
+ * @return const ChHashTable<T>::ChHTHeadNode* 
+ */
 template <typename T>
 const typename ChHashTable<T>::ChHTHeadNode *ChHashTable<T>::GetTable() const{
     return HashTable_;

@@ -425,7 +425,7 @@ void Test3(HashData *phd)
       {
         DumpTable<T>(ht);
         DumpStats<T>(ht);
-        cout << "==============================================================" << std::endl;
+        // cout << "==============================================================" << std::endl;
       }
       sprintf(buf, "%3i001", i);
       ht.insert(buf, 0);

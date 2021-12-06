@@ -134,8 +134,7 @@ class ChHashTable
 
      // Private fields and methods...
     // bool find(const ChHTHeadNode& bucket, const T& Data);
-    bool findInBucket(ChHTHeadNode* bucket, const T& Data, const char *Key);
-    // void push_back( ChHTHeadNode& bucket, const T& Data);
+    bool findInBucket(ChHTHeadNode* bucket, const char *Key);
     void push_front(ChHTHeadNode* bucket, const T& Data, const char *Key);
     void GrowTable();
 
