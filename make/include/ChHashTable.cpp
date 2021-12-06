@@ -28,6 +28,8 @@ ChHashTable<T>::ChHashTable(const HTConfig& Config, ObjectAllocator* allocator)
 
 template <typename T>
 ChHashTable<T>::~ChHashTable(){
+    clear(); // clear hashtable
+    delete[] HashTable_; // delete array
     if(HTStats_.Allocator_ == 0){
         //delete oa_ and oa_node
     }
