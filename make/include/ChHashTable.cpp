@@ -103,8 +103,11 @@ void ChHashTable<T>::push_front(ChHTHeadNode* bucket, const T& Data, const char 
     //go to last node
 
     ChHTNode* predessorNode = bucket->Nodes;
-    // ChHTNode* newNode = new ChHTNode(Data);
-    ChHTNode* newNode = new (reinterpret_cast<ChHTNode*>(oa_node->Allocate()))ChHTNode(Data);
+    ChHTNode* newNode;
+    if(!oa_node) // if allocator is nullptr
+        newNode = new ChHTNode(Data);
+    else
+        newNode = new (reinterpret_cast<ChHTNode*>(oa_node->Allocate()))ChHTNode(Data);
     strcpy(newNode->Key, Key);
     newNode->Next = predessorNode;
     bucket->Nodes = newNode;
